@@ -1,0 +1,65 @@
+from pymongo.database import Database
+from app.utils import AppModel
+from bson.objectid import ObjectId
+from pymongo.database import Database
+from ..adapters.chatgpt_service import ChatGPTService
+from fuzzywuzzy import fuzz
+import os
+from typing import List
+import json
+
+class Product(AppModel):
+    title: str
+    price: str
+    image_url: str
+    product_url: str
+    supermarket: str
+    category: str
+
+
+class PostRepository:
+    def __init__(self, database: Database):
+        # self.client = client
+        self.db = database
+        self.collection = self.db['Products']
+        self.chatgpt_service = ChatGPTService(os.environ["OPENAI_API_KEY"])
+
+    def find_products_by_dish(self, dish_name: str) -> List[Product]:
+        product_list_str = self.chatgpt_service.get_products_by_dish(dish_name)
+        product_list = json.loads(product_list_str)
+        print("Product List:", product_list)
+        # products = list(product_list.keys())
+        # print("Query:", query)
+        data = list(self.collection.find())
+        found_products = []
+        # print((data))
+        # print(self.collection)
+        for product, category in product_list.items():
+            print(product, category)
+            if found_product := get_cheapest_product(data, product, category):
+                found_products.append(found_product)
+
+        print("Result:", found_products)
+        return [Product(**product) for product in found_products]
+
+def get_products_by_name(data, product_name, category=None):
+    found_products = []
+    for product in data:
+        product_title = product["title"]
+        product_category = product["category"]
+        similarity = fuzz.token_set_ratio(product_name.lower(), product_title.lower())
+        if similarity >= 75:
+            if category is None or category.lower() == product_category.lower():
+                found_products.append(product)
+    return found_products
+
+
+def get_cheapest_product(data, product_name, category=None):
+    products = get_products_by_name(data, product_name, category)
+    if products:
+        try:
+            cheapest_product = min(products, key=lambda p: float(p["price"].replace(" ", "").replace(",", "").replace("₸", "")))
+            return cheapest_product
+        except ValueError:
+            return None
+    return None
