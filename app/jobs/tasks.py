@@ -135,7 +135,6 @@ def scrape_arbuz():
                 driver.execute_script("arguments[0].click();", next_page_link)
                 
     driver.quit()
-    client.close()
 
             
 
@@ -213,8 +212,6 @@ def scrape_galmart():
                     collection.insert_one(product_data)  # MongoDB
 
                 print(f"Страница {page} ({category}) обработана.")
-
-    client.close()
 
 
 def parse_both_websites():

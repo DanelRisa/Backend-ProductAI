@@ -1,6 +1,5 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-from .tasks import scrape_arbuz, scrape_galmart
-
+from .tasks import scrape_arbuz, scrape_galmart, parse_both_websites
 
 # scheduler = BackgroundScheduler()
 
@@ -10,11 +9,10 @@ from .tasks import scrape_arbuz, scrape_galmart
 
 scheduler = BackgroundScheduler()
 
-scheduler.add_job(scrape_arbuz, "cron", hour=21, minute=30)
+scheduler.add_job(parse_both_websites, "cron", hour=5, minute=0)
+# scheduler.add_job(scrape_galmart, "cron", hour=00, minute=55)
 
-scheduler.add_job(scrape_galmart, "cron", hour=22, minute=0)
-
-scheduler.start()
+# scheduler.start()
 
 # try:
 #     while True:
