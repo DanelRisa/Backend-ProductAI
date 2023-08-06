@@ -8,7 +8,7 @@ from .tasks import parse_both_websites
 
 scheduler = BackgroundScheduler()
 
-scheduler.add_job(parse_both_websites, "cron", hour=13, minute=45)
+scheduler.add_job(parse_both_websites, "cron", hour=14, minute=35)
 
 # scheduler.start()
 
