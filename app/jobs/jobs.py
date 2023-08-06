@@ -7,10 +7,10 @@ from .tasks import scrape_arbuz, scrape_galmart, parse_both_websites
 # # scheduler.add_job(scrape_news, "interval", hours=1)
 
 
-# scheduler = BackgroundScheduler()
+scheduler = BackgroundScheduler()
 
-# scheduler.add_job(parse_both_websites, "cron", hour=14, minute=55)
-# # scheduler.add_job(scrape_galmart, "cron", hour=00, minute=55)
+scheduler.add_job(parse_both_websites, "cron", hour=17, minute=20)
+# scheduler.add_job(scrape_galmart, "cron", hour=00, minute=55)
 
-# scheduler.start()
+scheduler.start()
 
